@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Partners Application</title>
+    <style>
+        body {
+            font-family: "72", "72full", Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: #f7f7f7;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #0070f2;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .app-links {
+            display: grid;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .app-link {
+            display: block;
+            padding: 1rem 1.5rem;
+            background: #0070f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .app-link:hover {
+            background: #0060d1;
+        }
+        .app-link h3 {
+            margin: 0 0 0.5rem 0;
+        }
+        .app-link p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        .api-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+        .code {
+            background: #f5f5f5;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Business Partners Application</h1>
+        <p>Welcome to the Business Partners event-driven application. Choose an interface below:</p>
+        
+        <div class="app-links">
+            <a href="app/business-partners/webapp/test/simple.html" class="app-link">
+                <h3>📱 Simple Table View</h3>
+                <p>Clean table display with all Business Partner data - perfect for quick viewing</p>
+            </a>
+            
+            <a href="app/business-partners/webapp/test/dashboard.html" class="app-link">
+                <h3>📊 Analytics Dashboard</h3>
+                <p>Executive dashboard with KPIs, metrics, and recent activity</p>
+            </a>
+            
+            <a href="app/business-partners/webapp/index.html" class="app-link">
+                <h3>🏗️ Fiori Elements App (ComponentSupport)</h3>
+                <p>Modern UI5 ComponentSupport pattern - cleanest approach</p>
+            </a>
+            
+            <a href="app/business-partners/webapp/test/component-support.html" class="app-link">
+                <h3>🆕 ComponentSupport Test Version</h3>
+                <p>Alternative ComponentSupport implementation for testing</p>
+            </a>
+            
+            <a href="app/business-partners/webapp/test/modern.html" class="app-link">
+                <h3>🔧 Manual Component Creation</h3>
+                <p>Traditional Component.create() with error handling</p>
+            </a>
+        </div>
+        
+        <div class="api-section">
+            <h3>🔗 API Endpoints</h3>
+            <p><strong>Business Partners Data:</strong></p>
+            <div class="code">GET /business-partners/BusinessPartners</div>
+            <p><strong>Service Metadata:</strong></p>
+            <div class="code">GET /business-partners/$metadata</div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem; color: #666;">
+            <p>💡 This application captures Business Partner creation events from S/4HANA in real-time</p>
+        </div>
+    </div>
+</body>
+</html>

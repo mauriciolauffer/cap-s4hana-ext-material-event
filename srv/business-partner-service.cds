@@ -4,6 +4,7 @@ using cap.s4hana.ext from '../db/data-model';
 service BusinessPartnerService {
   
   @readonly
+  @odata.draft.enabled: false
   entity BusinessPartners as projection on ext.BusinessPartners;
   
   // Event type definition for S/4HANA Business Partner Created event

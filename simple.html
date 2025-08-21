@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Partners - Simple Test</title>
+    
+    <script id="sap-ui-bootstrap" 
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.table"
+        data-sap-ui-async="true"
+        data-sap-ui-preload="async" 
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-language="en">
+    </script>
+    
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            // Create OData Model
+            const oModel = new sap.ui.model.odata.v4.ODataModel({
+                serviceUrl: "/business-partners/",
+                synchronizationMode: "None",
+                autoExpandSelect: true
+            });
+            
+            // Create Table
+            const oTable = new sap.m.Table({
+                headerText: "Business Partners from S/4HANA Events",
+                mode: "SingleSelect",
+                columns: [
+                    new sap.m.Column({
+                        header: new sap.m.Text({text: "Business Partner ID"})
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({text: "Name"})
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({text: "Category"})
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({text: "Grouping"})
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({text: "Created By"})
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({text: "Creation Date"})
+                    })
+                ]
+            });
+            
+            // Create Template
+            const oTemplate = new sap.m.ColumnListItem({
+                cells: [
+                    new sap.m.Text({text: "{BusinessPartner}"}),
+                    new sap.m.Text({text: "{BusinessPartnerName}"}),
+                    new sap.m.Text({text: "{BusinessPartnerCategory}"}),
+                    new sap.m.Text({text: "{BusinessPartnerGrouping}"}),
+                    new sap.m.Text({text: "{CreatedBy}"}),
+                    new sap.m.Text({text: "{CreationDate}"})
+                ]
+            });
+            
+            // Bind Items
+            oTable.bindItems({
+                path: "/BusinessPartners",
+                template: oTemplate
+            });
+            
+            // Create Page
+            const oPage = new sap.m.Page({
+                title: "Business Partners Dashboard",
+                content: [
+                    new sap.m.Panel({
+                        headerText: "Live Data from CAP Service",
+                        class: "sapUiResponsiveMargin",
+                        content: [oTable]
+                    })
+                ]
+            });
+            
+            // Create App
+            const oApp = new sap.m.App({
+                pages: [oPage]
+            });
+            
+            // Set Model and Place App
+            oApp.setModel(oModel);
+            oApp.placeAt("content");
+            
+            // Add refresh functionality
+            const refreshButton = new sap.m.Button({
+                text: "Refresh Data",
+                icon: "sap-icon://refresh",
+                press: function() {
+                    oModel.refresh();
+                }
+            });
+            
+            oPage.addHeaderContent(refreshButton);
+            
+            console.log("✅ Business Partners app loaded successfully!");
+        });
+    </script>
+    
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0;
+            font-family: "72", "72full", Arial, Helvetica, sans-serif;
+        }
+        .sapMPanel {
+            margin: 1rem;
+        }
+    </style>
+</head>
+<body class="sapUiBody" id="content">
+    <div style="padding: 2rem; text-align: center; background: #f7f7f7;">
+        <h2>🔄 Loading Business Partners Application...</h2>
+        <p>If this message persists, please check that the CAP server is running at <code>http://localhost:4004</code></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Partners Dashboard</title>
+    
+    <script id="sap-ui-bootstrap" 
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m,sap.ui.core,sap.suite.ui.commons"
+        data-sap-ui-async="true"
+        data-sap-ui-preload="async" 
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-language="en">
+    </script>
+    
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            // Create OData Model
+            const oModel = new sap.ui.model.odata.v4.ODataModel({
+                serviceUrl: "/business-partners/",
+                synchronizationMode: "None",
+                autoExpandSelect: true
+            });
+            
+            // Create KPI Tiles
+            const oTileContainer = new sap.m.TileContainer({
+                tiles: [
+                    new sap.m.NumericTile({
+                        header: "Total Business Partners",
+                        subheader: "From S/4HANA Events",
+                        value: "0",
+                        valueColor: "Good",
+                        indicator: "Up",
+                        size: "M"
+                    }),
+                    new sap.m.NumericTile({
+                        header: "Created Today",
+                        subheader: "New Partnerships",
+                        value: "0",
+                        valueColor: "Good",
+                        indicator: "Up", 
+                        size: "M"
+                    }),
+                    new sap.m.NumericTile({
+                        header: "Category 2 (Organizations)",
+                        subheader: "Company Partners",
+                        value: "0",
+                        valueColor: "Neutral",
+                        size: "M"
+                    }),
+                    new sap.m.NumericTile({
+                        header: "Recent Updates",
+                        subheader: "Last 7 Days",
+                        value: "0",
+                        valueColor: "Neutral",
+                        size: "M"
+                    })
+                ]
+            });
+            
+            // Create Chart Panel
+            const oChartPanel = new sap.m.Panel({
+                headerText: "Business Partner Categories",
+                class: "sapUiResponsiveMargin",
+                content: [
+                    new sap.m.Text({
+                        text: "Chart visualization would go here (requires sap.viz library)"
+                    })
+                ]
+            });
+            
+            // Create Recent Activity Table
+            const oRecentTable = new sap.m.Table({
+                headerText: "Recent Business Partner Activities",
+                mode: "None",
+                columns: [
+                    new sap.m.Column({ header: new sap.m.Text({text: "BP ID"}) }),
+                    new sap.m.Column({ header: new sap.m.Text({text: "Name"}) }),
+                    new sap.m.Column({ header: new sap.m.Text({text: "Action"}) }),
+                    new sap.m.Column({ header: new sap.m.Text({text: "Date"}) }),
+                    new sap.m.Column({ header: new sap.m.Text({text: "User"}) })
+                ]
+            });
+            
+            const oRecentTemplate = new sap.m.ColumnListItem({
+                cells: [
+                    new sap.m.Text({text: "{BusinessPartner}"}),
+                    new sap.m.Text({text: "{BusinessPartnerName}"}),
+                    new sap.m.Text({text: "Created"}),
+                    new sap.m.Text({text: "{CreationDate}"}),
+                    new sap.m.Text({text: "{CreatedBy}"})
+                ]
+            });
+            
+            oRecentTable.bindItems({
+                path: "/BusinessPartners",
+                template: oRecentTemplate,
+                sorter: new sap.ui.model.Sorter("CreatedAt", true),
+                length: 10
+            });
+            
+            // Create Page
+            const oPage = new sap.m.Page({
+                title: "Business Partners Dashboard - Event-Driven Analytics",
+                content: [
+                    new sap.m.Panel({
+                        headerText: "Key Performance Indicators",
+                        class: "sapUiResponsiveMargin",
+                        content: [oTileContainer]
+                    }),
+                    oChartPanel,
+                    new sap.m.Panel({
+                        headerText: "Recent Activities",
+                        class: "sapUiResponsiveMargin",
+                        content: [oRecentTable]
+                    })
+                ]
+            });
+            
+            // Add toolbar with actions
+            oPage.addHeaderContent(
+                new sap.m.Button({
+                    text: "Refresh",
+                    icon: "sap-icon://refresh",
+                    press: function() {
+                        oModel.refresh();
+                        updateKPIs();
+                    }
+                })
+            );
+            
+            oPage.addHeaderContent(
+                new sap.m.Button({
+                    text: "View All",
+                    icon: "sap-icon://table-view",
+                    press: function() {
+                        window.open("/app/business-partners/webapp/test/simple.html", "_blank");
+                    }
+                })
+            );
+            
+            // Create App
+            const oApp = new sap.m.App({
+                pages: [oPage]
+            });
+            
+            oApp.setModel(oModel);
+            oApp.placeAt("content");
+            
+            // Update KPIs function
+            function updateKPIs() {
+                const oBinding = oModel.bindList("/BusinessPartners");
+                oBinding.requestContexts().then(function(aContexts) {
+                    const total = aContexts.length;
+                    
+                    // Update total count
+                    const oTotalTile = oTileContainer.getTiles()[0];
+                    oTotalTile.setValue(total.toString());
+                    
+                    // Calculate today's count
+                    const today = new Date().toDateString();
+                    let todayCount = 0;
+                    let category2Count = 0;
+                    let recentCount = 0;
+                    
+                    const sevenDaysAgo = new Date();
+                    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                    
+                    aContexts.forEach(function(oContext) {
+                        const data = oContext.getObject();
+                        
+                        // Today's count
+                        if (data.CreationDate && new Date(data.CreationDate).toDateString() === today) {
+                            todayCount++;
+                        }
+                        
+                        // Category 2 count
+                        if (data.BusinessPartnerCategory === "2") {
+                            category2Count++;
+                        }
+                        
+                        // Recent updates count
+                        if (data.CreatedAt && new Date(data.CreatedAt) >= sevenDaysAgo) {
+                            recentCount++;
+                        }
+                    });
+                    
+                    oTileContainer.getTiles()[1].setValue(todayCount.toString());
+                    oTileContainer.getTiles()[2].setValue(category2Count.toString());
+                    oTileContainer.getTiles()[3].setValue(recentCount.toString());
+                });
+            }
+            
+            // Initial KPI load
+            setTimeout(updateKPIs, 1000);
+            
+            console.log("📊 Business Partners Dashboard loaded successfully!");
+        });
+    </script>
+    
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0;
+            font-family: "72", "72full", Arial, Helvetica, sans-serif;
+            background: #f7f7f7;
+        }
+        
+        .sapMPanel {
+            margin: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .sapMNumericTile {
+            border-radius: 8px;
+            margin: 0.5rem;
+        }
+    </style>
+</head>
+<body class="sapUiBody" id="content">
+    <div style="padding: 2rem; text-align: center;">
+        <h2>📊 Loading Business Partners Dashboard...</h2>
+        <p>Real-time analytics from S/4HANA Business Partner events</p>
+    </div>
+</body>
+</html>

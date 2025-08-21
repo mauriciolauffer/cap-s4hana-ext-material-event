@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Business Partners - Fixed Console Errors</title>
+    
+    <script id="sap-ui-bootstrap" 
+        src="https://ui5.sap.com/1.120.0/resources/sap-ui-core.js"
+        data-sap-ui-libs="sap.m,sap.ui.core,sap.fe.templates,sap.suite.ui.commons"
+        data-sap-ui-async="true"
+        data-sap-ui-preload="async" 
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-language="en"
+        data-sap-ui-resourceroots='{"cap.s4hana.ext.businesspartners": "./"}'>
+    </script>
+    
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            // Wait for all required modules to load
+            sap.ui.require([
+                "sap/ui/core/Component",
+                "sap/ui/core/ComponentContainer", 
+                "sap/m/Shell",
+                "sap/base/Log"
+            ], function(Component, ComponentContainer, Shell, Log) {
+                
+                // Set logging level to reduce noise
+                Log.setLevel(Log.Level.WARNING);
+                
+                // Create component with proper error handling
+                Component.create({
+                    name: "cap.s4hana.ext.businesspartners",
+                    manifest: true,
+                    settings: {
+                        componentData: {}
+                    }
+                }).then(function(oComponent) {
+                    
+                    // Create the shell with proper configuration
+                    var oShell = new Shell({
+                        app: new ComponentContainer({
+                            component: oComponent,
+                            height: "100%",
+                            width: "100%",
+                            propagateModel: true
+                        }),
+                        homeIcon: {
+                            'phone': '',
+                            'phone@2': '',
+                            'tablet': '',
+                            'tablet@2': '',
+                            'icon': ''
+                        }
+                    });
+                    
+                    // Place the shell
+                    oShell.placeAt("content");
+                    
+                    console.log("✅ Business Partners app loaded successfully!");
+                    
+                }).catch(function(error) {
+                    console.error("❌ Failed to create component:", error);
+                    
+                    // Show error message
+                    document.getElementById("content").innerHTML = 
+                        '<div style="padding: 2rem; text-align: center; font-family: Arial, sans-serif;">' +
+                        '<h2 style="color: #d32f2f;">⚠️ Application Error</h2>' +
+                        '<p>The Fiori Elements application could not be loaded.</p>' +
+                        '<p><strong>Error:</strong> ' + error.message + '</p>' +
+                        '<div style="margin-top: 2rem;">' +
+                        '<a href="/business-partners-simple" style="background: #0070f2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin: 0 10px;">Simple View</a>' +
+                        '<a href="/business-partners-dashboard" style="background: #0070f2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; margin: 0 10px;">Dashboard</a>' +
+                        '</div>' +
+                        '</div>';
+                });
+                
+            }, function(error) {
+                console.error("❌ Failed to load required modules:", error);
+                document.getElementById("content").innerHTML = 
+                    '<div style="padding: 2rem; text-align: center; color: #d32f2f;">' +
+                    '<h2>Module Loading Error</h2>' +
+                    '<p>Required UI5 modules could not be loaded.</p>' +
+                    '</div>';
+            });
+        });
+    </script>
+    
+    <style>
+        html, body, #content {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "72", "72full", Arial, Helvetica, sans-serif;
+        }
+        
+        body {
+            background: #f7f7f7;
+        }
+        
+        .sapUiBody {
+            background: white;
+        }
+    </style>
+</head>
+<body class="sapUiBody" id="content">
+    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 1.2rem; color: #0070f2;">
+        <div style="text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 1rem;">🔄</div>
+            <div>Loading Business Partners Application...</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "business-partners",
+  "version": "1.0.0",
+  "description": "Business Partners Fiori Elements App",
+  "main": "webapp/index.html",
+  "scripts": {
+    "start": "fiori run --open 'test/flpSandbox.html?sap-ui-xx-viewCache=false'",
+    "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
+    "deploy": "fiori verify",
+    "test": "npm run test:unit",
+    "test:unit": "echo 'No unit tests configured'"
+  },
+  "devDependencies": {
+    "@sap/ux-ui5-tooling": "^1",
+    "@ui5/cli": "^3"
+  },
+  "ui5": {
+    "dependencies": [
+      "@sap/ux-ui5-tooling"
+    ]
+  },
+  "sapux": [
+    "app-info"
+  ]
+}

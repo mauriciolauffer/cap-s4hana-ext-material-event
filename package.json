@@ -18,7 +18,12 @@
     "@cap-js/cds-types": "^0.13.0"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "watch": "cds watch",
+    "build": "cds build", 
+    "deploy": "cds deploy",
+    "start:ui": "npm start --prefix app/business-partners",
+    "start:all": "node app/start-app.js"
   },
   "type": "module",
   "cds": {
@@ -34,6 +39,9 @@
       "events": {
         "sap.s4.beh.businesspartner.v1.BusinessPartner.Created.v1": {}
       }
+    },
+    "serve": {
+      "static": true
     }
   }
 }
