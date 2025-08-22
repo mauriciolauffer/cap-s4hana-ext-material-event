@@ -41,3 +41,12 @@ service SalesService {
           BusinessPartnerIsBlocked as businessPartnerIsBlocked
     };
 }
+
+extend service BUPA_API with {
+  event BusinessPartner.Created @(topic:'sap.s4.beh.businesspartner.v1.BusinessPartner.Created.v1') {
+    BusinessPartner : String
+  }
+  event BusinessPartner.Changed @(topic:'sap.s4.beh.businesspartner.v1.BusinessPartner.Changed.v1') {
+    BusinessPartner : String
+  }
+}
