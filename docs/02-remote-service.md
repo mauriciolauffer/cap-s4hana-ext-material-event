@@ -1,4 +1,4 @@
-# Consuming Remote Service
+# Consuming Remote Services
 
 ## From SAP Business Accelerator Hub
 
@@ -6,24 +6,35 @@ The [SAP Business Accelerator Hub](https://api.sap.com/) provides many relevant 
 
 To download the [Business Partner API (A2X) from SAP S/4HANA Cloud](https://api.sap.com/api/API_BUSINESS_PARTNER/overview), go to section `API Resources`, select `API Specification`, and download the `EDMX file`.
 
-Business Partner (A2X)
-https://api.sap.com/api/API_BUSINESS_PARTNER/overview
-
-Business Partner Events
-https://api.sap.com/event/CE_BUSINESSPARTNEREVENTS/overview
-
-##Import API Definition
+## Import API Definition
 
 Import the API to your project using cds import.
+
+On a terminal, execute:
 
 ```shell
 cds import API_BUSINESS_PARTNER.edmx --as cds
 ```
 
-Install the new dependencies added to the project.
+A new entry will be added to the CDS configuration in the `package.json` file:
+
+```json
+  "cds": {
+    "requires": {
+      "API_BUSINESS_PARTNER": {
+        "kind": "odata-v2",
+        "model": "srv/external/API_BUSINESS_PARTNER"
+      }
+    }
+  }
+```
+
+New dependencies are added to the project, install them running.
+
+On a terminal, execute:
 
 ```shell
-npm i
+npm install
 ```
 
 ## Local Mocking
@@ -84,19 +95,20 @@ CAP automatically tries to delegate queries to database entities, which don't ex
 
 To avoid this error, you need to handle projections. Write a handler function to delegate a query to the remote service and run the incoming query on the external service.
 
-Create a new srv/service.js to handle the OData Service.
+Create a new `srv/service.js` file to handle the OData Service.
 
 ```js
 const cds = require("@sap/cds");
 
 class SalesService extends cds.ApplicationService {
   async init() {
-    const srv = this;
-    const { BusinessPartner, BusinessPartnerAddress } = srv.entities;
+    const { BusinessPartner, BusinessPartnerAddress, Notifications } =
+      this.entities;
     const bupaSrv = await cds.connect.to("API_BUSINESS_PARTNER");
+    const logger = cds.log("sales-service");
 
-    srv.on("READ", BusinessPartnerAddress, (req) => bupaSrv.run(req.query));
-    srv.on("READ", BusinessPartner, (req) => bupaSrv.run(req.query));
+    this.on("READ", BusinessPartnerAddress, (req) => bupaSrv.run(req.query));
+    this.on("READ", BusinessPartner, (req) => bupaSrv.run(req.query));
 
     await super.init();
   }
@@ -120,30 +132,13 @@ You should see the Remote Service and its data coming through.
 ![alt text](image-3.png)
 
 
-#### Mock Remote Service as OData Service
-
-Start the CAP application with the mocked remote service:
-
-```shell
-cds mock API_BUSINESS_PARTNER
-```
-
-If the startup is completed, run cds watch in the same project from a different terminal:
-
-```shell
-cds watch
-```
-
-You should see the Remote Service.
-
-![alt text](image-2.png)
-
-![alt text](image-3.png)
-
-
 #### Request failed with status code 404
 
-If you see the following error, it means the application is trying to connect to the wrong `remote service endpoint`.
+If you see any of the following errors, it means the local application is trying to connect to the wrong `remote service endpoint`. When locally testing, it should automatically find and connect everything, but it fails sometimes...
+
+```log
+Cannot GET /odata/v4/api-business-partner/A_BusinessPartner
+```
 
 ```json
 {
@@ -155,10 +150,16 @@ If you see the following error, it means the application is trying to connect to
 }
 ```
 
-Check the console logs, stop all the instances and force the remote service to run on the expected port. For instance:
+Check the console logs, you may see an entry like this one:
+
+```log
+[cds] - connect to API_BUSINESS_PARTNER > odata { url: 'http://localhost:57066/odata/v4/api-business-partner' }
+```
+
+Try stopping and restarting all instances. If the error persists, stop all the instances and force the remote service to run on the expected port. For instance:
 
 ```shell
-cds mock API_BUSINESS_PARTNER --port 59524
+cds mock API_BUSINESS_PARTNER --port 57066
 ```
 
 Then, run `cds watch` again.

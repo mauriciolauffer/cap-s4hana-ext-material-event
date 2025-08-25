@@ -5,7 +5,7 @@ namespace service.businessPartnerValidation;
 
 // service SalesService @(requires: 'authenticated-user') {
 service SalesService {
-  @odata.draft.enabled
+   @odata.draft.enabled
   entity Notifications          as projection on my.Notifications;
 
   entity Addresses              as projection on my.Addresses;
@@ -40,13 +40,4 @@ service SalesService {
           SearchTerm1              as searchTerm1,
           BusinessPartnerIsBlocked as businessPartnerIsBlocked
     };
-}
-
-extend service BUPA_API with {
-  event BusinessPartner.Created @(topic:'sap.s4.beh.businesspartner.v1.BusinessPartner.Created.v1') {
-    BusinessPartner : String
-  }
-  event BusinessPartner.Changed @(topic:'sap.s4.beh.businesspartner.v1.BusinessPartner.Changed.v1') {
-    BusinessPartner : String
-  }
 }

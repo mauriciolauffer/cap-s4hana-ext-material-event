@@ -2,6 +2,8 @@
 
 ## Start a new project
 
+On a terminal, execute:
+
 ```shell
 npm i -g @sap/cds-dk
 ```
@@ -136,6 +138,8 @@ ff0bc005-710c-4097-a687-64ef380498f4;17100002;TestData2;P
 ```
 
 ## Running the application locally
+
+On a terminal, execute:
 
 ```shell
 cds watch
