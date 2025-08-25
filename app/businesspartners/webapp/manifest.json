@@ -1,0 +1,167 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "com.sap.bp.businesspartners",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "ach": "CA-UI5-FE",
+    "dataSources": {
+      "mainService": {
+        "uri": "/odata/v4/sales/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      }
+    },
+    "offline": false,
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "ui5template.fiorielements.v4.lrop",
+      "version": "1.0.0"
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "intent1": {
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          },
+          "semanticObject": "partners",
+          "action": "display",
+          "title": "Business Partners",
+          "subTitle": "Manage Business Partners",
+          "icon": "sap-icon://project-definition-triangle"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.136.0",
+      "libs": {
+        "sap.ui.core": {},
+        "sap.m": {},
+        "sap.f": {},
+        "sap.ui.mdc": {},
+        "sap.ui.fl": {},
+        "sap.fe.templates": {},
+        "sap.uxap": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      },
+      "": {
+        "dataSource": "mainService",
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      }
+    },
+    "routing": {
+      "routes": [
+        {
+          "pattern": ":?query:",
+          "name": "NotificationList",
+          "target": ["NotificationList"]
+        },
+        {
+          "pattern": "Notifications({key})",
+          "name": "NotificationObjectPage",
+          "target": ["NotificationObjectPage"]
+        },
+        {
+          "pattern": "Notifications({key})/addresses({key2}):?query:",
+          "name": "AddressObjectPage_address",
+          "target": "AddressObjectPage_address"
+        }
+      ],
+      "targets": {
+        "NotificationList": {
+          "type": "Component",
+          "id": "NotificationList",
+          "name": "sap.fe.templates.ListReport",
+          "options": {
+            "settings": {
+              "entitySet": "Notifications",
+              "variantManagement": "Page",
+              "navigation": {
+                "Notifications": {
+                  "detail": {
+                    "route": "NotificationObjectPage"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "NotificationObjectPage": {
+          "type": "Component",
+          "id": "NotificationObjectPage",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "entitySet": "Notifications",
+              "navigation": {}
+            }
+          }
+        },
+        "AddressObjectPage_address": {
+          "type": "Component",
+          "id": "AddressObjectPage_address",
+          "name": "sap.fe.templates.ObjectPage",
+          "options": {
+            "settings": {
+              "entitySet": "Addresses",
+              "navigation": {}
+            }
+          }
+        }
+      },
+      "config": {}
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "transactional"
+  },
+  "sap.platform.cf": {
+    "ui5VersionNumber": "1.136.*"
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "com.sap.bp.businesspartners.one"
+  }
+}
