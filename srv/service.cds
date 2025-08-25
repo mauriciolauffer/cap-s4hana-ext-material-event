@@ -1,4 +1,4 @@
-using my.businessPartnerValidation as my from '../db/schema';
+using my.businessPartnerValidation as db from '../db/schema';
 using API_BUSINESS_PARTNER as BUPA_API from './external/API_BUSINESS_PARTNER';
 
 namespace service.businessPartnerValidation;
@@ -6,9 +6,9 @@ namespace service.businessPartnerValidation;
 // service SalesService @(requires: 'authenticated-user') {
 service SalesService {
    @odata.draft.enabled
-  entity Notifications          as projection on my.Notifications;
+  entity Notifications          as projection on db.Notifications;
 
-  entity Addresses              as projection on my.Addresses;
+  entity Addresses              as projection on db.Addresses;
 
   event BusinessPartnerVerified {
     businessPartner     : String;
