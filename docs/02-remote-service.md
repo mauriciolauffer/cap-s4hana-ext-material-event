@@ -68,6 +68,11 @@ BusinessPartner,AddressID,StreetName,CityName,Country,postalCode
 To expose a remote service entity, you add a projection on it to your CAP service:
 
 ```cds
+using API_BUSINESS_PARTNER as BUPA_API from './external/API_BUSINESS_PARTNER';
+
+...
+
+service SalesService @(requires: 'authenticated-user') {
 ...
  @readonly
   entity BusinessPartnerAddress as
@@ -88,7 +93,7 @@ To expose a remote service entity, you add a projection on it to your CAP servic
           SearchTerm1              as searchTerm1,
           BusinessPartnerIsBlocked as businessPartnerIsBlocked
     };
-...
+}
 ```
 
 CAP automatically tries to delegate queries to database entities, which don't exist as you're pointing to an external service. That behavior would produce an error like this:

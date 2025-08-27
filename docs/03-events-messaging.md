@@ -57,7 +57,7 @@ With agnostic consumption, you can easily receive events from anywhere.
 Edit the `srv/service.js` file to include the event/messaging handler. This code will listen to `Business Partner events` coming from `SAP S/4HANA`. Based on that, it'll populate the `Notifications` and `Addressess` tables defined in the project.
 
 ```js
-    this.after("UPDATE", Notifications, (data) => {
+    this.after("UPDATE", Notifications, async (data) => {
       if (
         data.verificationStatus_code === "V" ||
         data.verificationStatus_code === "INV"
