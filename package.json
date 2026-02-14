@@ -10,7 +10,7 @@
     "@sap-cloud-sdk/http-client": "^4.1.1",
     "@sap-cloud-sdk/resilience": "^4.1.1",
     "@sap/cds": "^9.2.1",
-    "express": "^4.21.2"
+    "express": "^4.22.1"
   },
   "engines": {
     "node": ">=20"
