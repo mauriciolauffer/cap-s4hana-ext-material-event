@@ -2,6 +2,19 @@
 
 In this phase you add the event-driven integration. Your application will listen for Business Partner created and changed events from S/4HANA, and automatically create `Notification` records in response. You will also add a mock event emitter to simulate S/4HANA sending those events locally, and wire up an outbound event when a Business Partner is verified or rejected.
 
+```
+┌─────────────────────────────────────────────┐              ┌──────────────────────────────────────────┐
+│              SAP S/4HANA                    │              │         CAP Application (BTP)            │
+│                                             │              │                                          │
+│                                             │  ┌────────┐  │                                          │
+│  Domain Events (BusinessPartner.Created) ───┼──┼────────┼──┼──► CAP reacts, creates Notification      │
+│  BusinessPartner.Verified ◄─────────────────┼──┼────────┼──┼─── UPDATE → emit BusinessPartnerVerified │
+│                                             │  │        │  │                                          │
+│                                             │  │ Event  │  │                                          │
+│                                             │  │ Broker │  │                                          │
+└─────────────────────────────────────────────┘  └────────┘  └──────────────────────────────────────────┘
+```
+
 ## Add messaging feature to the project
 
 Event-driven integration means your application reacts to things that happen in another system — in this case, S/4HANA telling you a Business Partner was created or changed — rather than polling for changes or waiting for a user to trigger something. The channel that carries those events between systems is a **message broker**.
@@ -157,7 +170,7 @@ A few things worth noting:
 
 In a real deployment, S/4HANA emits Business Partner events automatically whenever a Business Partner is created or changed. Since we don't have a real S/4HANA system here, we need to simulate that behaviour locally.
 
-> ⚠️ **LOCAL TEST ONLY** — the file created in this section must never be deployed to production or used with a real S/4HANA backend. It exists purely to simulate S/4HANA's event emission during local development. When connecting to a real system, delete this file.
+> **Local development only** — this file simulates S/4HANA's event emission for local testing. In production, the real S/4HANA system emits events instead and this file is never invoked.
 
 Create a new file `srv/external/API_BUSINESS_PARTNER.js`:
 
@@ -239,3 +252,23 @@ Content-Type: application/json
 As expected, the BP will be created and the event will be triggered. Our CAP application will react to that and populate the `Notifications` and `Addresses` tables.
 
 ![alt text](image-4.png)
+
+---
+
+## Going to production
+
+In this workshop messaging uses `local-messaging` — an in-process stand-in. Moving to real S/4HANA events requires one configuration change in `package.json` — no code changes.
+
+Add a `[production]` profile block inside `cds.requires`. CAP activates it automatically when `NODE_ENV=production`:
+
+```json
+"[production]": {
+  "messaging": {
+    "kind": "enterprise-messaging"
+  }
+}
+```
+
+- **`kind`** — swap `local-messaging` for `enterprise-messaging` (SAP Event Mesh). The topic subscription pattern in `service.js` does not change.
+- **No destination needed** — unlike the OData API, Event Mesh does not use a BTP Destination. Credentials are injected automatically by BTP at deploy time via a service binding. You bind your SAP Event Mesh service instance to the deployed application in your `mta.yaml`, and BTP populates the connection details into `VCAP_SERVICES` at runtime. CAP reads these automatically.
+- **No code changes** — `cds.connect.to("messaging")` in `service.js` works identically in both environments.

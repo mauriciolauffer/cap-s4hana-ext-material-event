@@ -35,26 +35,18 @@ The application connects to S/4HANA's Business Partner OData API to read Busines
 S/4HANA emits domain events when Business Partners are created or changed. Our CAP application subscribes to those events and reacts by creating Notification records. In this workshop we use `local-messaging` as a stand-in — in production this would be SAP Event Mesh or SAP Advanced Event Mesh, and only the `kind` configuration changes.
 
 ```
-┌─────────────────────────────────────────────┐
-│              SAP S/4HANA                    │
-│                                             │
-│  Business Partner API (OData V2)  ──────────┼──► CAP reads BP + address data
-│  Domain Events (BusinessPartner.Created) ───┼──► CAP reacts, creates Notification
-└─────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────┐
-│           CAP Application (BTP)             │
-│                                             │
-│  OData Service  ◄──── Fiori Elements UI     │
-│  Notifications, Addresses, StatusValues     │
-│  Event handler → populate Notifications     │
-│  After UPDATE  → emit BusinessPartnerVerified│
-└─────────────────────────────────────────────┘
+┌─────────────────────────────────────────────┐              ┌──────────────────────────────────────────┐
+│              SAP S/4HANA                    │              │         CAP Application (BTP)            │
+│                                             │              │                                          │
+│  Business Partner API (OData V2)  ◄─────────┼──────────────┼─── CAP reads BP + address data           │
+│                                             │  ┌────────┐  │                                          │
+│  Domain Events (BusinessPartner.Created) ───┼──┼────────┼──┼──► CAP reacts, creates Notification      │
+│  BusinessPartner.Verified ◄─────────────────┼──┼────────┼──┼─── UPDATE → emit BusinessPartnerVerified │
+│                                             │  │        │  │                                          │
+│                                             │  │ Event  │  │                                          │
+│                                             │  │ Broker │  │                                          │
+└─────────────────────────────────────────────┘  └────────┘  └──────────────────────────────────────────┘
 ```
-
-*An architecture diagram will be added here.*
-
-> The architecture diagram is available as `docs/architecture.drawio` — open it in [draw.io](https://app.diagrams.net) or the draw.io VS Code extension.
 
 ---
 

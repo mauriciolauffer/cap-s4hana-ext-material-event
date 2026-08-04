@@ -129,7 +129,7 @@ service SalesService {
 
 A few things worth noting here:
 
-- **`@(requires: 'authenticated-user')`** locks the service down to authenticated users. For this workshop this is commented out to keep things simple — but you'd re-enable it for a real deployment.
+- **`@(requires: 'authenticated-user')`** locks the service down to authenticated users. For this workshop it is commented out to keep things simple. Worth knowing: when deployed to BTP, CAP defaults to `authenticated-user` even without this annotation — so a deployed service is protected by default. To make it public you would need to explicitly override that.
 - **`@odata.draft.enabled`** on `Notifications` enables SAP Fiori's draft editing pattern, where changes are saved temporarily before being committed.
 - **The `event` block** defines a CAP event that this service can emit. You won't use it until Phase 3 — it's declared here so the service definition is complete from the start.
 

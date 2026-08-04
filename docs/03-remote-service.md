@@ -2,6 +2,15 @@
 
 In this phase you connect your CAP application to the S/4HANA Business Partner API. You will import the API definition, expose Business Partner and address data through your own service, and mock the remote API locally with CSV data so you can develop without needing a real S/4HANA system.
 
+```
+┌─────────────────────────────────────────────┐              ┌──────────────────────────────────────────┐
+│              SAP S/4HANA                    │              │         CAP Application (BTP)            │
+│                                             │              │                                          │
+│  Business Partner API (OData V2)  ◄─────────┼──────────────┼─── CAP reads BP + address data           │
+│                                             │              │                                          │
+└─────────────────────────────────────────────┘              └──────────────────────────────────────────┘
+```
+
 ## From SAP Business Accelerator Hub
 
 The [SAP Business Accelerator Hub](https://api.sap.com/) provides many relevant APIs from SAP. You can download API specifications in different formats.
@@ -215,3 +224,27 @@ cds mock API_BUSINESS_PARTNER --port 57066
 ```
 
 Then, run `cds watch` again.
+
+---
+
+## Going to production
+
+In this workshop the BP API is mocked locally. In production, the app connects to a real S/4HANA system via a BTP Destination.
+
+Add a `[production]` profile block to `cds.requires` in `package.json`:
+
+```json
+"[production]": {
+  "API_BUSINESS_PARTNER": {
+    "kind": "odata-v2",
+    "credentials": {
+      "destination": "S4HANA_BUSINESS_PARTNER",
+      "path": "/sap/opu/odata/sap/API_BUSINESS_PARTNER"
+    }
+  }
+}
+```
+
+- **`destination`** — the name of the BTP Destination pointing at your S/4HANA system, configured in the BTP cockpit. The app resolves it at runtime via the BTP Destination service, which must be bound to the deployed application.
+- **`model`** — does not need repeating in the production block; it is inherited from the base config.
+- **No code changes** — `cds.connect.to("API_BUSINESS_PARTNER")` in `service.js` works identically in both environments. CAP abstracts the transport.

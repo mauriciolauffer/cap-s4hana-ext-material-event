@@ -47,4 +47,15 @@ The module name is important — `businesspartners` matches the existing `app/bu
 
 ![alt text](image-8.png)
 
-> 📋 **Coming soon** — instructions for adding UI annotations and replacing `manifest.json` with the workshop version will be added here. In the meantime, copy `app/ui-annotations.cds` and `app/businesspartners/webapp/manifest.json` from the workshop repository into your project, then restart `cds watch`.
+## Adding UI annotations
+
+The generated app has no annotations yet — without them the List Report will display raw data with no field labels, filters, or column configuration. The annotations are defined in `app/ui-annotations.cds`.
+
+Copy the following files from the workshop repository into your project:
+
+- `app/ui-annotations.cds` → into your `app/` folder
+- `app/businesspartners/webapp/manifest.json` → replacing the generated `manifest.json` in your `app/businesspartners/webapp/` folder
+
+The `manifest.json` replacement is needed because the generated version is missing the Object Page route for the Address entity.
+
+Once both files are in place, restart `cds watch`. The Fiori app will pick up the annotations automatically on next load.
